@@ -20,20 +20,20 @@ janela deslizante do TCP para transmissao confiável, levando em consideracao o 
 	wnd:   tamanho da janela do transmissor e receptor em bytes
 	lp:    probabilidade de um datagrama UDP ser descartado 
 
-1.1.    Estabelecimento de Sessao 
+### 1.1.    Estabelecimento de Sessao 
 
 Voce deve implementar a fase de estabelecimento de sessao do TCP (three-way handshake) antes de comecar a transmitir os dados.  Nesta fase, os valores da janela do receptor e de números de sequencia iniciais devem ser negociados. Lembre-se que o numero de sequencia inicial de uma sessao TCP e um valor aleatorio de 32 bits. 
 
 
-1.2.    Confirmacoes Cumulativas
+### 1.2.    Confirmacoes Cumulativas
 
 Os segmentos de confirmação (ACKs) devem ser cumulativos, como no TCP.
 
 
-1.3.    Retransmissões 
+### 1.3.    Retransmissões 
 
 Voce deve implementar duas formas de retransmissao de segmentos perdidos:  ACKs dupli-cados e timeout.  Ao receber tres ACKs com o mesmo valor, voce assume que o segmento com numero de sequencia no campo ACK do segmento TCP foi perdido e precisa ser retransmitido. Para retransmissoes com timeout, voce deve calcular o valor do timeout em funcao dos tempos de envio dos segmentos e os tempos de recebimento de suas confirmacoes.  Utilize o algoritmo padrao do TCP para atualizacao do valor do timeout.  Para os segmentos SYN e SYN+ACK, os valores de timeout a serem utilizados sao os fornecidos na linha de comando.  A retransmissao por ACKs duplicados pode ser abilitada ou desabilitada pelo parametro dupack da linha de comando. A retransmissao por timeout e sempre ativa, mas um segmento pode ser retransmitido antes por ACKs duplicados.
 
-1.4.    Simulando Perdas de Pacote
+### 1.4.    Simulando Perdas de Pacote
 
 Voce deve implementar uma funcao de envio de datagramas UDP que recebe como parametro um valor de probabilidade de descarte de pacotes (esse valor e passado na linha de comando). Para cada datagrama a ser transmitido, voce deve gerar um numero aleatorio entre 0 e 1. Se o  valor  aleatorio  gerado  for  maior  do  que  a  probabilidade  de  descarte, o  datagrama  deve  ser transmitido. Caso contrario, o datagrama deve ser descartado.
