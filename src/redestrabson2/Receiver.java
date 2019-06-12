@@ -10,19 +10,22 @@ import java.util.ArrayList;
 
 class Receiver
 {
-	public static double lossPacketProbability = 0.0;
+	public static double lossPacketProbability;
 	public static String protocolName;
+	public static int windowSize;
 	
 	public static void main(String args[]) throws Exception
 	{		
-		String filePath = (System.getProperty("user.dir")).toString() + "\\input file\\SenderInput.txt";
+		String filePath = (System.getProperty("user.dir")).toString() + args[0];
 		File f = new File(filePath);
 		BufferedReader br = new BufferedReader(new FileReader(f));
 		protocolName = br.readLine();
 		br.close();
 		
-		int portNumber = Integer.parseInt(args[0]);
+		int portNumber = Integer.parseInt(args[1]);
 		DatagramSocket serverSocket = new DatagramSocket(portNumber);
+		windowSize = Integer.parseInt(args[2]);
+		lossPacketProbability = Integer.parseInt(args[3]);
 		byte[] receiveData = new byte[1024];
 		byte[] sendData = new byte[1024];
 		int expectedAck = 1;

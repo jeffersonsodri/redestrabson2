@@ -15,39 +15,50 @@ class Sender
 	public static int windowSize;
 	public static int timeOutValue;
 	public static int maxSegmentSize;
+	public static int duplicatePack;
 	public static int totalNoOfPackets;
-	public static double bitErrorProbability = 0.0;
+	public static double bitErrorProbability;
 	public static double lossAckProbability = 0.1;
 	
 	public static void main(String args[]) throws Exception
 	{
 		
 		// Initialization and retrieving algorithm parameters from file
-		String filePath = (System.getProperty("user.dir")).toString() + "\\input file\\" + args[0];
-		List<String> algorithmParameters = new ArrayList<String>();
+		String filePath = (System.getProperty("user.dir")).toString() + args[0];
+		//List<String> algorithmParameters = new ArrayList<String>();
 		File f = new File(filePath);
 		BufferedReader br = new BufferedReader(new FileReader(f));
-		String line = null;
+		//String line = null;
+		
+		
+		/**
 		while((line = br.readLine()) != null) {
 			algorithmParameters.add(line);
-		}
+		}*/
+		InetAddress IPAddress = InetAddress.getByName(args[1]); // pega endereço
+		int portNumber = Integer.parseInt(args[2]);// porta
+		//int tamanhoJanela = Integer.parseInt(args[3]);
+		
 		br.close();
 		
 		int highestAckRcvd = 1;
 		List<Integer> srAcks = new ArrayList<Integer>();
 		
-		protocolName = algorithmParameters.get(0).trim();
-		noOfBitsInSeq = Integer.parseInt(algorithmParameters.get(1).trim());
-		windowSize = Integer.parseInt(algorithmParameters.get(2).trim());
-		timeOutValue = Integer.parseInt(algorithmParameters.get(3).trim());
-		maxSegmentSize = Integer.parseInt(algorithmParameters.get(4).trim());
-		totalNoOfPackets = Integer.parseInt(args[2]);
+		//protocolName = algorithmParameters.get(0).trim();
+		//noOfBitsInSeq = Integer.parseInt(algorithmParameters.get(1).trim());
+		windowSize = Integer.parseInt(args[3]);
+		timeOutValue = Integer.parseInt(args[4]);
+		maxSegmentSize = Integer.parseInt(args[5]);
+		duplicatePack = Integer.parseInt(args[6]);
+		bitErrorProbability = Integer.parseInt(args[7]);
+		
+		totalNoOfPackets = -1; // tem que concertar isso aq
 		
 		Data.setWindowSize(windowSize);
 		
 		DatagramSocket clientSocket = new DatagramSocket();
-		int portNumber = Integer.parseInt(args[1]);
-		InetAddress IPAddress = InetAddress.getByName("localhost");
+		
+		
 		byte[] sendData = new byte[1024];
 		byte[] receiveData = new byte[1024];
 		
