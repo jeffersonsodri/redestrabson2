@@ -1,9 +1,4 @@
-package com.src.slidingwindow;
-
-/**
- * @author Monica Padmanabhan Kuppuswamy
- * @author Prayas Rode
- */
+package redestrabson2;
 
 import java.io.BufferedReader;
 import java.io.File;
