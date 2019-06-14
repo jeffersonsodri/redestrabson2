@@ -37,3 +37,27 @@ Voce deve implementar duas formas de retransmissao de segmentos perdidos:  ACKs 
 ### 1.4.    Simulando Perdas de Pacote
 
 Voce deve implementar uma funcao de envio de datagramas UDP que recebe como parametro um valor de probabilidade de descarte de pacotes (esse valor e passado na linha de comando). Para cada datagrama a ser transmitido, voce deve gerar um numero aleatorio entre 0 e 1. Se o  valor  aleatorio  gerado  for  maior  do  que  a  probabilidade  de  descarte, o  datagrama  deve  ser transmitido. Caso contrario, o datagrama deve ser descartado.
+
+
+### 1.5 	Entrega do Trabalho
+
+O trabalho pode ser feito em grupo de no máximo dois alunos e deve ser entregue até o
+dia 19 de junho de 2019. A entrega do trabalho consistirá em uma demonstração das funcionalidades do proxy no laboratório. O grupo deve preparar uma breve apresentação e um
+roteiro para a demonstração. O grupo deve indicar explicitamente as funcionalidades que foram
+implementadas e as que não foram. Na demonstração, o grupo deve incluir casos que demonstrem claramente as funcionalidades implementadas, como, por exemplo, o tratamento de várias
+conexões simultâneas. Além disso, o grupo deve entregar o código fonte e um breve relatório descrevendo o trabalho. Neste relatório, o grupo deve incluir uma breve introdução, decisões de
+implementação, funcionalidades não implementadas, problemas enfrentados na implementação,
+etc. O relatório deve ser entregue em um arquivo PDF.
+
+### 1.6  Avaliação Experimental do Protocolo
+
+No relatório do trabalho, você deve incluir dois gráficos com os tempos de transmissão de
+um arquivo em função da probabilidade de perda de pacotes e diferentes valores de MSS. O
+eixo X deve conter os valores de perda de pacote 0%, 1% 2%, 4%, 8%, 16% e 32%. Um gráfico
+deve utilizar o valor de MSS igual a 512 e outro o valor 1024. O arquivo a ser transmitido deve
+possuir pelo menos 1GB de tamanho e a conexão entre o cliente e o servidor deve ser feita em
+uma rede local, ou seja, o cliente e o servidor não podem estar rodando na mesma máquina.
+Para cada valor de probabilidade, você deve fazer a mesma transmissão pelo menos dez vezes
+e calcular o intervalo de confian¸ca. Em seu relatório, você deve descrever o cenário usado no
+experimento, ou seja, as caracter´ısticas dos computadores usados no experimento e a velocidade
+da rede que conecta os computadores.
