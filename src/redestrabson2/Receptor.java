@@ -11,15 +11,17 @@ import java.util.ArrayList;
 class Receptor
 {
 	public static double probabilidadePacotePerdido;
-	public static String nomeProtocolo;
+	public static String nomeProtocolo = "GBN";
 	public static int tamanhoJanela;
 	
 	public static void main(String args[]) throws Exception
 	{		
-		String arquivo = (System.getProperty("user.dir")).toString() + args[0];
+		LRUCache<Integer,Pacote> otherBudy = new LRUCache<Integer,Pacote>();
+		String arquivo = (System.getProperty("user.dir")).toString() +"//" + args[0];
 		File f = new File(arquivo);
+		f.createNewFile();
 		BufferedReader br = new BufferedReader(new FileReader(f));
-		nomeProtocolo = br.readLine();
+		//nomeProtocolo = br.readLine();
 		br.close();
 		
 		int numeroPorta = Integer.parseInt(args[1]);
@@ -44,7 +46,8 @@ class Receptor
 			String resultCheckSum = Dado.sumData(pacoteChecksum + new String(rcvPacket.getChecksum()));
 			boolean bitError = false;
 			
-			InetAddress IPAddress = receivePacket.getAddress();
+			//InetAddress IPAddress = receivePacket.getAddress();
+			InetAddress IPAddress = InetAddress.getByName("localhost");
 			int port = receivePacket.getPort();
 			
 			if(Math.random() > probabilidadePacotePerdido) {
@@ -77,7 +80,7 @@ class Receptor
 						sentAcks.add(ack);
 						expectedAck++;
 					} else {
-						System.out.println("***BIT ERRO DETECTADO***");
+						System.out.println("***BIT ERROR DETECTADO***");
 						ack = new Reconhecimento(sentAcks.get(sentAcks.size() - 1).getnumeroAck());
 					}
 				} else {
@@ -86,7 +89,7 @@ class Receptor
 					if (Integer.parseInt(resultCheckSum) == 11111111) {
 						ack = new Reconhecimento(rcvPacket.getNumeroDeSequencia());
 					} else {
-						System.out.println("***BIT ERRO DETECTADO***");
+						System.out.println("***BIT ERROR DETECTADO***");
 						bitError = true;
 					}
 				}

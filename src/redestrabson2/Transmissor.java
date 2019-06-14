@@ -10,7 +10,7 @@ import java.util.List;
 
 class Transmissor
 {	
-	public static String nomeProtocolo;
+	public static String nomeProtocolo = "GBN";
 	public static int numBitsEmSeq;
 	public static int tamanhoJanela;
 	public static int valorDoTimeout;
@@ -18,25 +18,24 @@ class Transmissor
 	public static int pacoteDuplicado;
 	public static int totalNumPacotes;
 	public static double probabilidadeErroBit;
-	public static double probabilidadeAckPerdido = 0.1;
+	public static double probabilidadeAckPerdido = 0;
 	
 	public static void main(String args[]) throws Exception
 	{
-		
+		LRUCache<Integer,Pacote> pacotesEnviados = new LRUCache<Integer,Pacote>();
 		//Inicializacao e recebimento dos parametros do arquivo para o programa
-		String arquivo = (System.getProperty("user.dir")).toString() + args[0];
+		String arquivo = (System.getProperty("user.dir")).toString() +"//"+ args[0];
 		//List<String> parametrosAlgoritmo = new ArrayList<String>();
 		File f = new File(arquivo);
 		BufferedReader br = new BufferedReader(new FileReader(f));
 		//String line = null;
-		
 		
 		/**
 		while((line = br.readLine()) != null) {
 			parametrosAlgoritmo.add(line);
 		}*/
 		InetAddress enderecoIP = InetAddress.getByName(args[1]); // pega endereço
-		int portNumber = Integer.parseInt(args[2]);// porta
+		int numeroPorta = Integer.parseInt(args[2]);// porta
 		//int tamanhoJanela = Integer.parseInt(args[3]);
 		
 		br.close();
@@ -52,22 +51,25 @@ class Transmissor
 		pacoteDuplicado = Integer.parseInt(args[6]);
 		probabilidadeErroBit = Integer.parseInt(args[7]);
 		
-		totalNumPacotes = -1; // tem que concertar isso aq
-		
+		totalNumPacotes = (int) f.length()/tamanhoMaximoSeguimento; // tem que concertar isso aq
+		if(totalNumPacotes==0) {
+			totalNumPacotes=1;
+		}
+		System.out.println("Tamanho do arquivo" +f.length());
+		System.out.println("Numero de pacotes a ser enviado "+totalNumPacotes);
 		Dado.settamanhoJanela(tamanhoJanela);
 		
 		DatagramSocket clientSocket = new DatagramSocket();
 		
 		
-		byte[] dadoEnviado = new byte[1024];
-		byte[] dadoRecebido = new byte[1024];
+		byte[] dadoEnviado = new byte[tamanhoMaximoSeguimento];
+		byte[] dadoRecebido = new byte[tamanhoMaximoSeguimento];
 		
 		int base = 1;
 		int proximoNumSequencia = 1;
 		int i = 1;
-		ArrayList<Pacote> pacotesEnviados = new ArrayList<Pacote>();
-		
 		while (i <= totalNumPacotes) {
+			System.out.println("ta vivo");
 			try {
 				if (proximoNumSequencia - base < tamanhoJanela) {
 					
@@ -85,7 +87,7 @@ class Transmissor
 					
 					//Convertendo o objeto Pacote para Bytes para enviar ao receptor 
 					dadoEnviado = Dado.toBytes(pacote);
-					DatagramPacket pacoteDatagramEnviado = new DatagramPacket(dadoEnviado, dadoEnviado.length, enderecoIP, portNumber);
+					DatagramPacket pacoteDatagramEnviado = new DatagramPacket(dadoEnviado, dadoEnviado.length, enderecoIP, numeroPorta);
 					
 					// Imprimindo informacao do pacote
 					int seqNumero = -1;
@@ -113,7 +115,7 @@ class Transmissor
 					}
 					
 					// Adicao do pacote para a lista de envio
-					pacotesEnviados.add(pacote);
+					pacotesEnviados.put(i,pacote);
 					
 					// Incremento do numero de sequencia
 					proximoNumSequencia++;
@@ -184,7 +186,7 @@ class Transmissor
 					int ns = proximoNumSequencia - 1;
 					for(int j = b-1 ; j < ns; j++) {
 						dadoEnviado = Dado.toBytes(pacotesEnviados.get(j));
-						DatagramPacket pacoteDatagramEnviado = new DatagramPacket(dadoEnviado, dadoEnviado.length, enderecoIP, portNumber);
+						DatagramPacket pacoteDatagramEnviado = new DatagramPacket(dadoEnviado, dadoEnviado.length, enderecoIP, numeroPorta);
 						
 						int seqNumero;
 						if (pacotesEnviados.get(j).getNumeroDeSequencia() > tamanhoJanela + 1) {
@@ -223,7 +225,7 @@ class Transmissor
 				} else {
 					System.out.println("Timeout. Reenviar pacote nao negociado mais antigo...");
 					dadoEnviado = Dado.toBytes(pacotesEnviados.get(base - 1));
-					DatagramPacket pacoteDatagramEnviado = new DatagramPacket(dadoEnviado, dadoEnviado.length, enderecoIP, portNumber);
+					DatagramPacket pacoteDatagramEnviado = new DatagramPacket(dadoEnviado, dadoEnviado.length, enderecoIP, numeroPorta);
 					
 					int seqNumero;
 					if (pacotesEnviados.get(base - 1).getNumeroDeSequencia() > tamanhoJanela * 2) {
@@ -237,7 +239,7 @@ class Transmissor
 					clientSocket.send(pacoteDatagramEnviado);
 				}
 			}
-		} 
+		}System.out.println("Ta morto");
 		clientSocket.close();
 	}
 }
