@@ -40,9 +40,9 @@ public class Dado {
 	}
 	
 	/**
-	 * Performs one complement for a binary dado
-	 * @param dado Binary dado to take ones complement to get the checksum
-	 * @return Binary string which contains the checksum value
+	 * Executa um complemento para um dado binario
+	 * @param dado - Dado binario para pegar uns complementos para obter o checksum
+	 * @return String Binaria que contem o conteudo do checksum
 	 */
 	public static String takeOnesComplement(String dado) {
 		StringBuilder binarioChecksum = new StringBuilder();
