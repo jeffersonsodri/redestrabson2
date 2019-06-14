@@ -236,6 +236,7 @@ class Transmissor
 							// Simulando ACK perdido com probabilidade 0.05
 							if (Math.random() < probabilidadeAckPerdido) {
 								System.out.println("***ACK PERDIDO***");
+								
 								Reconhecimento verificarAckDuplicado = (Reconhecimento) Dado.toObject(receivePacket.getData());
 								int w = 0;
 								for (; w < numeroDuplicadoACK.length; w++) {
