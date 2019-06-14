@@ -62,6 +62,16 @@ class Transmissor
 		DatagramSocket clientSocket = new DatagramSocket();
 		
 		
+		//String para guardar os números ACK que foram enviados
+		int[] numeroDuplicadoACK = new int[valorDoTimeout*2];
+		
+		
+		//Contador com 0 ACKs duplicados
+		int[] numeroDuplicadoCont = new int[valorDoTimeout*2];
+		for (int i = 0; i < numeroDuplicadoCont.length; i++) {
+			numeroDuplicadoCont[i] = 0;
+		}
+		
 		byte[] dadoEnviado = new byte[tamanhoMaximoSeguimento];
 		byte[] dadoRecebido = new byte[tamanhoMaximoSeguimento];
 		
@@ -128,11 +138,27 @@ class Transmissor
 				clientSocket.receive(receivePacket);
 				
 				String resposta = new String(receivePacket.getData());
+				
 				if (!(resposta.contains("PACOTE PERDIDO"))) {
 		
 					// Simulando ACK perdido com probabilidade 0.05
 					if (Math.random() < probabilidadeAckPerdido) {
 						System.out.println("***ACK PERDIDO***");
+						Reconhecimento verificarAckDuplicado = (Reconhecimento) Dado.toObject(receivePacket.getData());
+						int j = 0;
+						for (; j < numeroDuplicadoACK.length; j++) {
+							if(numeroDuplicadoACK[j] == verificarAckDuplicado.getnumeroAck()) {
+								numeroDuplicadoCont[j]++;
+								break;
+							}
+						}
+						/**
+						 * ACK duplicado 3 vezes, fazer retransmisssao
+						 */
+						if(numeroDuplicadoACK[j] > 3) {
+							System.out.println("ACK FOI ENVIADO 3 VEZES.");
+						}
+						
 					} else {
 						
 						// Convertendo para o display
@@ -181,6 +207,7 @@ class Transmissor
 			} catch (Exception e) {
 				
 				if (nomeProtocolo.equalsIgnoreCase("GBN")) {
+					
 					System.out.println("Timeout. \n" + "Reenviando pacotes não reconhecidos da base para(proximoNumeroSequencia -1)...");
 					int b = base;
 					int ns = proximoNumSequencia - 1;
@@ -194,7 +221,7 @@ class Transmissor
 						} else {
 							seqNumero = pacotesEnviados.get(j).getNumeroDeSequencia();
 						}
-						System.out.println("RESENDING PACKET NUMBER: " + pacotesEnviados.get(j).getNumeroDeSequencia()  + " SEQ NO: " + seqNumero);
+						System.out.println("REENVIANDO NUMERO PACOTE: " + pacotesEnviados.get(j).getNumeroDeSequencia()  + " SEQ NUMERO: " + seqNumero);
 						
 						// Envido para o socket do receptor
 						clientSocket.send(pacoteDatagramEnviado);
@@ -209,6 +236,20 @@ class Transmissor
 							// Simulando ACK perdido com probabilidade 0.05
 							if (Math.random() < probabilidadeAckPerdido) {
 								System.out.println("***ACK PERDIDO***");
+								Reconhecimento verificarAckDuplicado = (Reconhecimento) Dado.toObject(receivePacket.getData());
+								int w = 0;
+								for (; w < numeroDuplicadoACK.length; w++) {
+									if(numeroDuplicadoACK[w] == verificarAckDuplicado.getnumeroAck()) {
+										numeroDuplicadoCont[w]++;
+										break;
+									}
+								}
+								/**
+								 * ACK duplicado 3 vezes, fazer retransmisssao
+								 */
+								if(numeroDuplicadoACK[w] > 3) {
+									System.out.println("ACK FOI ENVIADO 3 VEZES.");
+								}
 							} else {
 								
 								// Convertendo para o display
@@ -233,7 +274,7 @@ class Transmissor
 					} else {
 						seqNumero = pacotesEnviados.get(base - 1).getNumeroDeSequencia();
 					}
-					System.out.println("RESENDING PACKET NUMBER: " + pacotesEnviados.get(base - 1).getNumeroDeSequencia()  + " SEQ NO: " + seqNumero);
+					System.out.println("REENVIANDO PACOTE NUMERO: " + pacotesEnviados.get(base - 1).getNumeroDeSequencia()  + " SEQ NUMERO: " + seqNumero);
 					
 					// Envido para o socket do receptor
 					clientSocket.send(pacoteDatagramEnviado);

@@ -1,0 +1,3 @@
+java redestrabson2.Transmissor teste.txt localhost 4007 10 3000000000 512 0 0
+
+java redestrabson2.Receptor testef.txt 4007 10 0
