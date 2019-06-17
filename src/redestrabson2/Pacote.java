@@ -1,19 +1,23 @@
 package redestrabson2;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 public class Pacote implements Serializable{
 	
+	private static final Logger LOGGER = Logger.getLogger( Pacote.class.getName() );
 	private int numeroDeSequencia;
-	private byte[] dado;
 	private byte[] checksum;
 	private int tamanhoJanela;
 	
-	public Pacote(int numeroDeSequencia, byte[] dado, byte[] checksum, int tamanhoJanela) {
+	public Pacote(int numeroDeSequencia, byte[] checksum, int tamanhoJanela) {
 		super();
 		this.numeroDeSequencia = numeroDeSequencia;
-		this.dado = dado;
 		this.checksum = checksum;
 		this.tamanhoJanela = tamanhoJanela;
 	}
@@ -24,14 +28,6 @@ public class Pacote implements Serializable{
 
 	public int getNumeroDeSequencia() {
 		return numeroDeSequencia;
-	}
-
-	public byte[] getDado() {
-		return dado;
-	}
-	
-	public void setDado(byte[] dado) {
-		this.dado = dado;
 	}
 
 	public byte[] getChecksum() {
@@ -49,5 +45,19 @@ public class Pacote implements Serializable{
 	public void setTamanhoJanela(int tamanhoJanela) {
 		this.tamanhoJanela = tamanhoJanela;
 	}
+	
+	public static byte[] readFileToByteArray(File file){
+        FileInputStream fis = null;
+        byte[] bArray = new byte[(int) file.length()];
+        try{
+            fis = new FileInputStream(file);
+            fis.read(bArray);
+            fis.close();        
+            
+        }catch(IOException ioExp){
+        	LOGGER.log( Level.SEVERE, ioExp.toString(), ioExp );
+        }
+        return bArray;
+    }
 
 }

@@ -273,9 +273,9 @@ SEAFIGHT {
 İNCİ BAĞIŞI--DONATE LİST
 Lion Savaş odasına lütfen - GO LION ROOM
 seviye =  level
-[01:04, 31/1/2019] [~⭐~] Alper: 60 aa sağ üst
-[01:04, 31/1/2019] [~⭐~] Alper: 60 ch sağ alt
-[01:04, 31/1/2019] [~⭐~] Alper: 00 ch sol alt
+[01:04, 31/1/2019] [~�?~] Alper: 60 aa sağ üst
+[01:04, 31/1/2019] [~�?~] Alper: 60 ch sağ alt
+[01:04, 31/1/2019] [~�?~] Alper: 00 ch sol alt
 Sifir sıfır A A or sol üst
 
 İNCİ BAĞIŞI--DONATE LİST
@@ -307,3 +307,13 @@ ben giriyorum şuan ışığa = I'm entering to sunmap now
 <07:18:03> "Alper- Android [Work]": Sıkıntı yok dost filoları öğrenmeye çalışarsan sevinirim
 <07:18:24> "Alper- Android [Work]": Sıkıntı yok kardeşim
 
+ - Can u let him the last shot?
+tabi = of course
+
+s.a usta ışıkta mısınız ? = are you at sunmap ?
+s.a usta lion mısınız ? = are you at lion ?
+ben giriyorum şuan ışığa = I'm entering to sunmap now
+}
+
+<07:17:34> "Alper- Android [Work]": Belki yeni girsin filoya
+<07:17:43> "Alper- Andr

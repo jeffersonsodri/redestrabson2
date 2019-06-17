@@ -2,6 +2,7 @@ package redestrabson2;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -126,9 +127,25 @@ public class Dado {
 	public static Object toObject(byte[] b) throws ClassNotFoundException, IOException {
 		ByteArrayInputStream byteStream = new ByteArrayInputStream(b);
 		ObjectInputStream objStream = new ObjectInputStream(byteStream);
+		objStream.close();
 		return objStream.readObject();
 	}
 	
+	public static Pacote makePacket(int proximoNumeroSequencia) {
+		String dadoBinario = null;
+		String binarioChecksum = null;
+		
+		// Gerar dado binario e computar checksum
+		dadoBinario = Dado.getdadoBinario();
+		String dadoSum = Dado.sumData(dadoBinario);
+		binarioChecksum = Dado.takeOnesComplement(dadoSum);
+		
+		// Criar um novo pacote com um novo dado, checksum e numero de sequencia
+		Pacote pkt = new Pacote(proximoNumeroSequencia, binarioChecksum.getBytes(), tamanhoJanela);
+		
+		return pkt;
+	}
+	/**
 	public static Pacote makePacket(int proximoNumeroSequencia)
 	{
 		String dadoBinario = null;
@@ -143,5 +160,15 @@ public class Dado {
 		Pacote pkt = new Pacote(proximoNumeroSequencia, dadoBinario.getBytes(), binarioChecksum.getBytes(), tamanhoJanela);
 		
 		return pkt;
+	}*/
+	
+	public static String biteToBinary(byte[] pake) {
+		String s1="";
+		for(int i=0;i<pake.length;i++) {
+			s1 += String.format("%8s", Integer.toBinaryString(pake[i] & 0xFF)).replace(' ', '0');
+		}
+		return s1;
 	}
+	
+	
 }
