@@ -52,13 +52,12 @@ public class Cliente {
 		if (totalNumPacotes == 0) {
 			totalNumPacotes++;
 		}
+		
+		
 		if (tamPac >= totalNumPacotes) {
 			totalNumPacotes++;
 		}
-		// System.out.println("Tamanho double " + tamPac);
-		// System.out.println("Numero real de pacotes " + totalNumPacotes);
 
-		// System.out.println("Numero de pacotes a ser enviado " + totalNumPacotes);
 		Dado.settamanhoJanela(tamanhoJanela);
 
 		DatagramSocket clientSocket = new DatagramSocket();
@@ -72,7 +71,7 @@ public class Cliente {
 			numeroDuplicadoCont[i] = 0;
 		}
 
-		byte[] dadoEnviado = new byte[tamanhoMaximoSeguimento];
+		
 		byte[] dadoRecebido = new byte[tamanhoMaximoSeguimento];
 		byte[] important = new byte[512];
 
@@ -89,7 +88,7 @@ public class Cliente {
 				if (proximoNumSequencia - base < tamanhoJanela) {
 					// byte[] arq = Pacote.readFileToByteArray(f);
 					// System.out.println("Dado limpo" + dadoEnviado);
-
+					byte[] dadoEnviado = new byte[tamanhoMaximoSeguimento];
 					int z = 0;
 					while (fi.available() > 0 && z < tamanhoMaximoSeguimento) {
 						dadoEnviado[z] = (byte) fi.read();
@@ -203,12 +202,12 @@ public class Cliente {
 								if(ns>totalNumPacotes) {
 									ns=totalNumPacotes;
 								}
-								for (int j = b - 1; j < ns; j++) {
+								for (int j = b - 1; j <= ns; j++) {
 
 									// System.out.println("Aqui tem "+new String(Transmissor.dadosEnviados.get(0)));
 									// System.out.println("Aqui tem "+new
 									// String(Transmissor.dadosEnviados.get(base-1)));
-
+									byte[] dadoEnviado = new byte[tamanhoMaximoSeguimento];
 									dadoEnviado = dadosEnviados.get(base);
 									DatagramPacket pacoteDatagramEnviado = new DatagramPacket(dadoEnviado,
 											dadoEnviado.length, enderecoIP, numeroPorta);
@@ -309,7 +308,7 @@ public class Cliente {
 					// System.out.println("Aqui tem "+new String(Transmissor.dadosEnviados.get(0)));
 					// System.out.println("Aqui tem "+new
 					// String(Transmissor.dadosEnviados.get(base-1)));
-
+					byte[] dadoEnviado = new byte[tamanhoMaximoSeguimento];
 					dadoEnviado = dadosEnviados.get(base);
 					DatagramPacket pacoteDatagramEnviado = new DatagramPacket(dadoEnviado, dadoEnviado.length,
 							enderecoIP, numeroPorta);

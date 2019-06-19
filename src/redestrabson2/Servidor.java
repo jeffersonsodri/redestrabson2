@@ -15,8 +15,8 @@ public class Servidor {
 	public static int tamanhoJanela;
 	public static int tamanhoDado;
 	public static String arquivo;
-	public static String total = "";
-	public static String tfim = "";
+	public static String total = null;
+	public static String tfim = null;
 	public static int Acks;
 	public static int flagA = -1;
 	public static boolean pacoteCerto = true;
@@ -69,17 +69,18 @@ public class Servidor {
 			
 			
 			if(sentAcks.size()==totalP) {
-				System.out.println("O que temos aq é" +total);
-				System.out.println("A quantidade é" +pacotesForaDeOrdem.size());
+				//System.out.println("O que temos aq é" +total);
+				//System.out.println("A quantidade é" +pacotesForaDeOrdem.size());
 				String s;
-				for(int b=1;b<=totalP;b++) {
+				for(int b=whereToStop;b<=totalP;b++) {
 					s = new String(pacotesForaDeOrdem.get(b));
+					//System.out.println("O pacote " +b+ "  é   "+s);
 					total = total + s;
 				}	
 				// rcvPacket = Dado.makePacket(proximoNumSequencia,dadoEnviado);
 				//System.out.println("O que temos aq é" +total);
 				
-				StringBuffer str = new StringBuffer();
+				final StringBuffer str = new StringBuffer();
 
 				str.append(total);
 
@@ -155,19 +156,24 @@ public class Servidor {
 						dadoRecebido = receivePacket.getData();
 	
 						//System.out.println(receivePacket.getData());
-						//String s = new String(dadoRecebido);
-						//total = total + s;
+						String s = new String(dadoRecebido);
+						total = total + s;
 	
 						//rcvPacket = Dado.makePacket(proximoNumSequencia,dadoEnviado);
 	
-						//StringBuffer str = new StringBuffer();
+						StringBuffer str = new StringBuffer();
 						
-						//str.append(total);
+						str.append(total);
 						
-						
-						
-						pacotesForaDeOrdem.put(rcvPacket.getNumeroDeSequencia(), dadoRecebido);
-						
+						str.append(total);
+
+						try {
+							FileWriter out = new FileWriter(arquivo);
+							out.write(str.toString());
+							out.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}				
 						
 					}else{
 						pacotesForaDeOrdem.put(rcvPacket.getNumeroDeSequencia(), dadoRecebido);
