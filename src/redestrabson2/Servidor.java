@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Servidor {
@@ -15,13 +16,13 @@ public class Servidor {
 	public static int tamanhoJanela;
 	public static int tamanhoDado;
 	public static String arquivo;
-	public static String total = null;
-	public static String tfim = null;
+	public static String total = "";
+	public static String tfim = "";
 	public static int Acks;
-	public static int flagA = -1;
 	public static boolean pacoteCerto = true;
 	public static int whereToStop = -1;
 	public static int totalP;
+	public static int firstLost = -1;
 
 	public static void main(String args[]) throws Exception {
 		arquivo = (System.getProperty("user.dir")).toString() + "//" + args[0];
@@ -38,50 +39,48 @@ public class Servidor {
 		tamanhoJanela = Integer.parseInt(args[2]);
 		probabilidadePacotePerdido = Double.parseDouble(args[3]);
 
-		System.out.println("Servidor Iniciado na porta " + numeroPorta + ", o arquivo será salvo em :" + arquivo);
+		System.out.println("Servidor Iniciado na porta " + numeroPorta + ", o arquivo serï¿½ salvo em :" + arquivo);
 
 		// System.out.println("Tamanho recomendado " +tamanhoDado);
 
 		byte[] dadoEnviado = new byte[512];
 		byte[] pacoteRecebido = new byte[512];
-		byte[] important = new byte[512]; 
-		
+		byte[] important = new byte[512];
+
 		HashMap<Integer, byte[]> pacotesForaDeOrdem = new HashMap<Integer, byte[]>();
 
 		int expectedAck = 1;
 		ArrayList<Reconhecimento> sentAcks = new ArrayList<Reconhecimento>();
 
-		
-		
-		
 		while (true) {
 			// System.out.println("Dado inicial " +dadoRecebido);
-			if (tamanhoDado == 0 ||  Acks == -1 || totalP == 0) {
+			if (tamanhoDado == 0 || Acks == -1 || totalP == 0) {
 				DatagramPacket importantInfo = new DatagramPacket(important, pacoteRecebido.length);
 				serverSocket.receive(importantInfo);
-				
+
 				Know rcv = (Know) Dado.toObject(importantInfo.getData());
-				
+
 				totalP = rcv.getNumeroTotal();
 				tamanhoDado = rcv.getPackSize();
 				Acks = rcv.getFastRetrasmission();
 			}
-			
-			
-			if(sentAcks.size()==totalP) {
-				//System.out.println("O que temos aq é" +total);
-				//System.out.println("A quantidade é" +pacotesForaDeOrdem.size());
-				String s;
-				for(int b=whereToStop;b<=totalP;b++) {
-					s = new String(pacotesForaDeOrdem.get(b));
-					//System.out.println("O pacote " +b+ "  é   "+s);
-					total = total + s;
-				}	
-				// rcvPacket = Dado.makePacket(proximoNumSequencia,dadoEnviado);
-				//System.out.println("O que temos aq é" +total);
-				
-				final StringBuffer str = new StringBuffer();
 
+			if (sentAcks.size() == totalP && pacoteCerto) {
+				System.exit(0);
+			} else if (sentAcks.size() == totalP) {
+				// System.out.println("O que temos aq ï¿½" +total);
+				// System.out.println("A quantidade ï¿½" +pacotesForaDeOrdem.size());
+				String s;
+				for (int b = whereToStop; b <= totalP; b++) {
+					s = new String(pacotesForaDeOrdem.get(b));
+					// System.out.println("O pacote nulo " +pacotesForaDeOrdem.get(totalP));
+
+					total = total + s;
+				}
+				// rcvPacket = Dado.makePacket(proximoNumSequencia,dadoEnviado);
+				// System.out.println("O que temos aq ï¿½" +total);
+
+				final StringBuffer str = new StringBuffer();
 				str.append(total);
 
 				try {
@@ -91,11 +90,9 @@ public class Servidor {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				pacoteCerto=true;
+				System.exit(0);
 			}
-			
-			
-			
+
 			byte[] dadoRecebido = new byte[tamanhoDado];
 			// tem que testar se funciona
 
@@ -145,83 +142,103 @@ public class Servidor {
 				Reconhecimento ack = null;
 
 				/**
-				 * Envio de reconhecimento base onde o protocolo é Go-Back-N ou SR
+				 * Envio de reconhecimento base onde o protocolo ï¿½ Go-Back-N ou SR
 				 * 
 				 */
 				if (rcvPacket.getNumeroDeSequencia() == expectedAck) {
 					ack = new Reconhecimento(expectedAck);
 					sentAcks.add(ack);
 					// System.out.println("Dado recebido depois " +dadoRecebido);
-					if(pacoteCerto) {
+					if (pacoteCerto) {
 						dadoRecebido = receivePacket.getData();
-	
-						//System.out.println(receivePacket.getData());
-						String s = new String(dadoRecebido);
-						total = total + s;
-	
-						//rcvPacket = Dado.makePacket(proximoNumSequencia,dadoEnviado);
-	
-						StringBuffer str = new StringBuffer();
-						
-						str.append(total);
-						
-						str.append(total);
 
-						try {
-							FileWriter out = new FileWriter(arquivo);
-							out.write(str.toString());
-							out.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}				
-						
-					}else{
+						if (sentAcks.size() == totalP) {
+							byte[] trimmed = trim(dadoRecebido);
+
+							String s = new String(trimmed);
+
+							total = total + s;
+
+							// rcvPacket = Dado.makePacket(proximoNumSequencia,dadoEnviado);
+
+							StringBuffer str = new StringBuffer();
+
+							str.append(total);
+
+							try {
+								FileWriter out = new FileWriter(arquivo);
+								out.write(str.toString());
+								out.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+
+						} else {
+
+							// System.out.println(receivePacket.getData());
+							String s = new String(dadoRecebido);
+
+							total = total + s;
+
+							// rcvPacket = Dado.makePacket(proximoNumSequencia,dadoEnviado);
+
+							StringBuffer str = new StringBuffer();
+
+							str.append(total);
+
+							try {
+								FileWriter out = new FileWriter(arquivo);
+								out.write(str.toString());
+								out.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+
+					} else {
 						pacotesForaDeOrdem.put(rcvPacket.getNumeroDeSequencia(), dadoRecebido);
-						if(whereToStop==-1) {
+						if (whereToStop == -1) {
 							whereToStop = expectedAck;
 						}
 					}
-					flagA = -1;
 					expectedAck++;
 				} else if (Acks == 1) {
-					//System.out.println("Pacote recebido não é o desejado");
+					// System.out.println("Pacote recebido nï¿½o ï¿½ o desejado");
 					if (sentAcks.size() > 0) {
 						ack = new Reconhecimento(sentAcks.get(sentAcks.size() - 1).getnumeroAck());
 					} else {
+						firstLost = 0;
 						ack = new Reconhecimento(0);
 					}
 					pacotesForaDeOrdem.put(rcvPacket.getNumeroDeSequencia(), dadoRecebido);
 					pacoteCerto = false;
 				} else {
-					//System.out.println("Pacote recebido não é o desejado, recebemos o "+ rcvPacket.getNumeroDeSequencia() + " e esperavamos o " + expectedAck);
+					// System.out.println("Pacote recebido nï¿½o ï¿½ o desejado, recebemos o "+
+					// rcvPacket.getNumeroDeSequencia() + " e esperavamos o " + expectedAck);
 					pacotesForaDeOrdem.put(rcvPacket.getNumeroDeSequencia(), dadoRecebido);
 					if (sentAcks.size() > 0) {
-						if(sentAcks.size()<totalP) {
+						if (sentAcks.size() < totalP) {
 							ack = new Reconhecimento(rcvPacket.getNumeroDeSequencia());
-						}else {
+						} else {
 							ack = new Reconhecimento(sentAcks.get(sentAcks.size() - 1).getnumeroAck());
 						}
 					} else {
+						firstLost = 0;
 						ack = new Reconhecimento(0);
 					}
-					pacoteCerto=false;
-					flagA=0;
+					pacoteCerto = false;
 				}
 
 				dadoEnviado = Dado.toBytes(ack);
 				DatagramPacket pacoteEnviado = new DatagramPacket(dadoEnviado, dadoEnviado.length, IPAddress, port);
 
-				// Imprimir o número de confirmação enviado do Receptor para o transmissor
-		
-				if(flagA==-1) {
+				// Imprimir o nï¿½mero de confirmaï¿½ï¿½o enviado do Receptor para o transmissor
+				if (firstLost == -1) {
 					System.out.println("ACK ENVIADO: " + ack.getnumeroAck());
 					System.out.println("\n");
 					serverSocket.send(pacoteEnviado);
-				}else {
-					System.out.println("ACK ENVIADO: " + (ack.getnumeroAck()));
-					System.out.println("\n");
-					serverSocket.send(pacoteEnviado);
 				}
+				firstLost = -1;
 
 			} else {
 				System.out.println("***PACOTE PERDIDO***");
@@ -255,6 +272,15 @@ public class Servidor {
 		catch (Exception e) {
 			System.out.println("Exception: " + e);
 		}
+	}
+
+	static byte[] trim(byte[] bytes) {
+		int i = bytes.length - 1;
+		while (i >= 0 && bytes[i] == 0) {
+			--i;
+		}
+
+		return Arrays.copyOf(bytes, i + 1);
 	}
 
 }
