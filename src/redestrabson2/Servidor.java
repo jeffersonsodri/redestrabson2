@@ -68,12 +68,10 @@ public class Servidor {
 			if (sentAcks.size() == totalP && pacoteCerto) {
 				System.exit(0);
 			} else if (sentAcks.size() == totalP) {
-				// System.out.println("O que temos aq �" +total);
-				// System.out.println("A quantidade �" +pacotesForaDeOrdem.size());
+				System.out.println("Terminando de salvar pacotes...");
 				String s;
 				for (int b = whereToStop; b <= totalP; b++) {
 					s = new String(pacotesForaDeOrdem.get(b));
-					// System.out.println("O pacote nulo " +pacotesForaDeOrdem.get(totalP));
 
 					total = total + s;
 				}
@@ -102,20 +100,11 @@ public class Servidor {
 			DatagramPacket receivePacket2 = new DatagramPacket(pacoteRecebido, pacoteRecebido.length);
 			serverSocket.receive(receivePacket2);
 
-			// Pacote rcvPacket = null;
 			Pacote rcvPacket = (Pacote) Dado.toObject(receivePacket2.getData());
-
-			// ps.write(modifiedSentence);
-			// String modifiedSentence = new String(receivePacket.getData());
 
 			/**
 			 * Calculando o checksum do lado dos receptores
 			 */
-
-			// String resultCheckSum = "11111111";
-			// boolean bitError = false;
-			// String resultCheckSum = "11111111";
-			// boolean bitError = false;
 
 			InetAddress IPAddress = receivePacket.getAddress();
 			int port = receivePacket.getPort();
@@ -148,7 +137,6 @@ public class Servidor {
 				if (rcvPacket.getNumeroDeSequencia() == expectedAck) {
 					ack = new Reconhecimento(expectedAck);
 					sentAcks.add(ack);
-					// System.out.println("Dado recebido depois " +dadoRecebido);
 					if (pacoteCerto) {
 						dadoRecebido = receivePacket.getData();
 
@@ -159,7 +147,6 @@ public class Servidor {
 
 							total = total + s;
 
-							// rcvPacket = Dado.makePacket(proximoNumSequencia,dadoEnviado);
 
 							StringBuffer str = new StringBuffer();
 
@@ -175,12 +162,10 @@ public class Servidor {
 
 						} else {
 
-							// System.out.println(receivePacket.getData());
 							String s = new String(dadoRecebido);
 
 							total = total + s;
 
-							// rcvPacket = Dado.makePacket(proximoNumSequencia,dadoEnviado);
 
 							StringBuffer str = new StringBuffer();
 
@@ -203,7 +188,6 @@ public class Servidor {
 					}
 					expectedAck++;
 				} else if (Acks == 1) {
-					// System.out.println("Pacote recebido n�o � o desejado");
 					if (sentAcks.size() > 0) {
 						ack = new Reconhecimento(sentAcks.get(sentAcks.size() - 1).getnumeroAck());
 					} else {
@@ -213,8 +197,6 @@ public class Servidor {
 					pacotesForaDeOrdem.put(rcvPacket.getNumeroDeSequencia(), dadoRecebido);
 					pacoteCerto = false;
 				} else {
-					// System.out.println("Pacote recebido n�o � o desejado, recebemos o "+
-					// rcvPacket.getNumeroDeSequencia() + " e esperavamos o " + expectedAck);
 					pacotesForaDeOrdem.put(rcvPacket.getNumeroDeSequencia(), dadoRecebido);
 					if (sentAcks.size() > 0) {
 						if (sentAcks.size() < totalP) {

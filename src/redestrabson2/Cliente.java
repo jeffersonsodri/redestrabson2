@@ -33,7 +33,7 @@ public class Cliente {
 
 		FileInputStream fi = new FileInputStream(arquivo);
 
-		InetAddress enderecoIP = InetAddress.getByName(args[1]); // pega endereço
+		InetAddress enderecoIP = InetAddress.getByName(args[1]); // pega endereï¿½o
 		int numeroPorta = Integer.parseInt(args[2]);// porta
 
 		// int highestAckRcvd = 1;
@@ -62,7 +62,7 @@ public class Cliente {
 
 		DatagramSocket clientSocket = new DatagramSocket();
 
-		// String para guardar os números ACK que foram enviados
+		// String para guardar os nï¿½meros ACK que foram enviados
 		int[] numeroDuplicadoACK = new int[valorDoTimeout * 2];
 
 		// Contador com 0 ACKs duplicados
@@ -86,8 +86,6 @@ public class Cliente {
 		while (i <= totalNumPacotes | base <= totalNumPacotes) {
 			try {
 				if (proximoNumSequencia - base < tamanhoJanela) {
-					// byte[] arq = Pacote.readFileToByteArray(f);
-					// System.out.println("Dado limpo" + dadoEnviado);
 					byte[] dadoEnviado = new byte[tamanhoMaximoSeguimento];
 					int z = 0;
 					while (fi.available() > 0 && z < tamanhoMaximoSeguimento) {
@@ -98,14 +96,10 @@ public class Cliente {
 					Pacote pacote = Dado.makePacket(proximoNumSequencia);
 
 					pacoteEnviado = Dado.toBytes(pacote);
-					// System.out.println("Dado Enviado antes " + dadoEnviado);
-					// Convertendo o objeto Pacote para Bytes para enviar ao receptor
-					// System.out.println("O tamanho do enviado é " +pacoteEnviado.length);
 					DatagramPacket pacoteDatagramEnviado = new DatagramPacket(dadoEnviado, dadoEnviado.length,
 							enderecoIP, numeroPorta);
 					DatagramPacket pacoteDatagramEnviado2 = new DatagramPacket(pacoteEnviado, pacoteEnviado.length,
 							enderecoIP, numeroPorta);
-					// System.out.println("Dado Enviado depois" + dadoEnviado);
 
 					// Imprimindo informacao do pacote
 					int seqNumero = -1;
@@ -138,9 +132,7 @@ public class Cliente {
 
 					// Adicao do pacote para a lista de envio
 					pacotesEnviados.put(i, pacote);
-					// System.out.println("Aqui tem "+pacotesEnviados.get(i));
 					dadosEnviados.put(i, dadoEnviado);
-					// System.out.println("Aqui tem "+new String(dadosEnviados.get(i)));
 					}	
 					// Incremento do numero de sequencia
 					proximoNumSequencia++;
@@ -179,11 +171,7 @@ public class Cliente {
 
 						if (ack.getnumeroAck() <= totalNumPacotes) {
 							System.out.println("ACK RECEBIDO: " + ack.getnumeroAck());
-							
-							//ackR++;
 						}
-						//System.out.println("acks recebidos reais" +ackR);
-						//System.out.println("\n");
 						if (pacoteDuplicado == 1) {
 
 							int numAck = ack.getnumeroAck();
@@ -204,9 +192,6 @@ public class Cliente {
 								}
 								for (int j = b - 1; j <= ns; j++) {
 
-									// System.out.println("Aqui tem "+new String(Transmissor.dadosEnviados.get(0)));
-									// System.out.println("Aqui tem "+new
-									// String(Transmissor.dadosEnviados.get(base-1)));
 									byte[] dadoEnviado = new byte[tamanhoMaximoSeguimento];
 									dadoEnviado = dadosEnviados.get(base);
 									DatagramPacket pacoteDatagramEnviado = new DatagramPacket(dadoEnviado,
@@ -248,6 +233,7 @@ public class Cliente {
 										clientSocket.receive(receivePacket);
 									} catch (Exception ex) {
 										System.out.println("Servidor Desligado ou Inexistente");
+										System.exit(0);
 									}
 
 									resposta = new String(receivePacket.getData());
@@ -303,11 +289,6 @@ public class Cliente {
 				}
 				for (int j = b - 1; j < ns; j++) {
 					
-					//System.out.println("o j é " +j);
-					//System.out.println("acks recebidos reais" +ackR);
-					// System.out.println("Aqui tem "+new String(Transmissor.dadosEnviados.get(0)));
-					// System.out.println("Aqui tem "+new
-					// String(Transmissor.dadosEnviados.get(base-1)));
 					byte[] dadoEnviado = new byte[tamanhoMaximoSeguimento];
 					dadoEnviado = dadosEnviados.get(base);
 					DatagramPacket pacoteDatagramEnviado = new DatagramPacket(dadoEnviado, dadoEnviado.length,
@@ -344,6 +325,7 @@ public class Cliente {
 						clientSocket.receive(receivePacket);
 					} catch (Exception ex) {
 						System.out.println("Servidor Desligado ou Inexistente");
+						System.exit(0);
 					}
 
 					String resposta = new String(receivePacket.getData());
